@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { Route, Routes} from 'react-router-dom'
 import './App.css'
+import CountriesList from './components/CountriesList'
+/* import CountryDetails from './components/CountryDetails' */
+import Navbar from './components/Navbar'
+/* import countries from "./countries.json" */
+import { useEffect, useState} from 'react'
+import CountryDetailsFetch from './components/CountryDetailsFetch'
 
 function App() {
-  const [count, setCount] = useState(0)
+const [countries, setCountries] = useState([]);
 
+
+
+/* useEffect(() => {
+   
+    fetch("https://ih-countries-api.herokuapp.com/countries")
+    .then(response => {
+     return response.json()
+  })
+    .then(data => {
+    setCountries(data)
+    
+  })
+    .catch(err => console.log(err))
+   
+ }, []) */
+  
+  
   return (
-    <div className="App">
+    <>
+      <Navbar/>
+      <div className='App'>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
 
+      <CountriesList countries={countries}/>
+      </div>
+      <Routes>
+        {/* <Route path='/:alpha3Code' element={<CountryDetails countries={countries}/>}/> */}
+        <Route path='/:alpha3Code' element={<CountryDetailsFetch countries={countries} setCountries={setCountries}/>}/>
+      </Routes>
+      </div>
+    </>
+    )
+}
 export default App
