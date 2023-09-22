@@ -11,6 +11,22 @@ function App() {
 const [countries, setCountries] = useState([]);
 
 
+const fetchCountries = () => {
+  fetch("https://ih-countries-api.herokuapp.com/countries")
+  .then(response => {
+    return response.json()
+  })
+  .then(data => {
+    setCountries(data)
+  })
+  .catch(err => console.log(err))
+}
+
+
+useEffect(() => {
+  /* console.log("start") */
+  fetchCountries()
+}, [])
 
 /* useEffect(() => {
    

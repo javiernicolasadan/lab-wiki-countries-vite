@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 
-const CountryDetailsFetch = ({countries, setCountries}) => {
+const CountryDetailsFetch = ({countries}) => {
   
   const {alpha3Code} = useParams()  
   /* console.log(alpha3Code) */
   const [country, setCountry] = useState(null);
-  const [borders, setBorders] = useState([]);  
-  const [alphaBorders, setAlphaBorders] = useState([]);
+  const [namesAndAlphas, setNamesAndAlphas] = useState([]);  
+  /* const [alphaBorders, setAlphaBorders] = useState([]); */
   
   
-    const fetchData = () => {
+    const fetchCountry = () => {
         fetch(`https://ih-countries-api.herokuapp.com/countries/${alpha3Code}`)
         .then(response => {
         return response.json()
@@ -23,20 +23,9 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
         .catch (err => {console.log(err)})
     }
 
-    const fetchCountries = () => {
-        fetch("https://ih-countries-api.herokuapp.com/countries")
-        .then(response => {
-            
-         return response.json()
-      })
-        .then(data => {
-        setCountries(data)
-        
-      })
-        .catch(err => console.log(err))
-    }
 
-    const fetchBorders = () => {
+
+    /* const fetchBorders = () => {
         fetch(`https://ih-countries-api.herokuapp.com/countries/${alpha3Code}`)
         .then(response => {
          return response.json()
@@ -44,25 +33,25 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
         .then((data) => {
             let borders = data.borders
             let bordersMap = borders.map((eachBorder) => {
-                /* console.log(eachBorder) */
+                
                 let filtered = countries.filter((eachCountry) => {
                     if(eachBorder === eachCountry.alpha3Code) {
                         return eachCountry
                     }
                 }) 
-                /* console.log(filtered) */
+                
                 return  filtered[0].name.common
             })
             return bordersMap
         })
         .then ((nameBorders) => {
-            /* console.log(nameBorders) */
+            
             setBorders(nameBorders)
         })
         .catch(err => console.log(err))
-        }
+        } */
 
-        const fetchAlphaBorders = () => {
+        /* const fetchAlphaBorders = () => {
             fetch(`https://ih-countries-api.herokuapp.com/countries/${alpha3Code}`)
             .then(response => {
              return response.json()
@@ -70,14 +59,15 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
             .then((data) => {
                 let borders = data.borders
                 let bordersMap = borders.map((eachBorder) => {
-                    /* console.log(eachBorder) */
+
                     let filtered = countries.filter((eachCountry) => {
                         if(eachBorder === eachCountry.alpha3Code) {
                             return eachCountry
                         }
                     }) 
-                    /* console.log(filtered) */
+                    
                     return  filtered[0].alpha3Code
+                    
                 })
                 return bordersMap
             })
@@ -85,24 +75,57 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
                 setAlphaBorders(alphaBorders)
             })
             .catch(err => console.log(err))
-            }
+            } */
+
+            const fetchNamesAndBorders = () => {
+              fetch(`https://ih-countries-api.herokuapp.com/countries/${alpha3Code}`)
+              .then(response => {
+               return response.json()
+            })
+              .then((data) => {
+                  let borders = data.borders
+                  let bordersMap = borders.map((eachBorder) => {
+                      let filtered = countries.filter((eachCountry) => {
+                          if(eachBorder === eachCountry.alpha3Code) {
+                              return eachCountry
+                          }
+                      }) 
+                      return  {name: filtered[0].name.common, alpha3Code: filtered[0].alpha3Code}
+                  })
+                  return bordersMap
+              })
+              .then ((namesAndAlphas) => {
+                console.log(namesAndAlphas)
+                setNamesAndAlphas(namesAndAlphas)
+              })
+              .catch(err => console.log(err))
+              }
 
   useEffect (() => {
-    fetchData()
+    fetchCountry()
   }, [alpha3Code])
 
   useEffect (() => {
-    fetchCountries()
+    fetchNamesAndBorders()
   }, [])
   
-  useEffect (() => {
+ /*  useEffect (() => {
     fetchBorders()
   }, [alpha3Code])
 
   useEffect (() => {
     fetchAlphaBorders()
+  }, [alpha3Code]) */
+  
+  useEffect (() => {
+    fetchNamesAndBorders()
   }, [alpha3Code])
   
+ 
+    
+  
+  
+ 
 
 
    return ( 
@@ -132,7 +155,7 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
                 <td>Borders</td>
                     <td>
                     <ul>
-                   {borders &&
+                   {/* {borders &&
                         borders.map((eachBorder, i) => {
                             return (
                             <Link key={i} to={`/${alphaBorders[i]}`}>
@@ -140,7 +163,16 @@ const CountryDetailsFetch = ({countries, setCountries}) => {
                             </Link>
                             )
                         })
-                    }
+                    } */}
+                    {namesAndAlphas &&
+                      namesAndAlphas.map((eachNameAndBorder, i) => {
+                        console.log(eachNameAndBorder)
+                          return (
+                            <Link key={i} to={`/${eachNameAndBorder.alpha3Code}`}>
+                                <li>{eachNameAndBorder.name}</li>
+                            </Link>
+                          )
+                      })}
                     </ul>
                     </td>
                 </tr>
